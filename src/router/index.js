@@ -1,16 +1,18 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 
-const Home = () => import('views/home/Home.vue')
-const Category = () => import('views/category/Category.vue')
-const Cart = () => import('views/cart/Cart.vue')
-const Profile = () => import('views/profile/Profile.vue')
+const Home = () => import('views/home/Home')
+const Category = () => import('views/category/Category')
+const Cart = () => import('views/cart/Cart')
+const Profile = () => import('views/profile/Profile')
 
-Vue.use(Router)
+// 1.安装VueRouter
+Vue.use(VueRouter)
 
+// 2.配置路由信息
 const routes = [
   {
-    path: '',
+    path: '/',
     redirect: '/home'
   },
   {
@@ -32,7 +34,7 @@ const routes = [
 ]
 
 // 3.创建路由对象
-const router = new Router({
+const router = new VueRouter({
   mode: 'history',
   routes
 })

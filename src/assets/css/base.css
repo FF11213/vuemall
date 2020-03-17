@@ -1,9 +1,9 @@
-@import './normalize.css';
+@import "./normalize.css";
 
 :root {
   --color-text: #666;
-  --color-high-text: #bbbbbb;
-  --color-tint: #cccccc;
+  --color-high-text: #ff5777;
+  --color-tint: #ff8198;
   --color-background: #fff;
   --font-size: 14px;
   --line-height: 1.5;
