@@ -49,19 +49,27 @@ export default {
         pullUpLoad: this.pullUpLoad
       });
 
+      // 监听滚动的位置
+      this.scroll.on("scroll", position => {
+        // console.log(position);
+      });
+
       // 2.将监听事件回调
-      this.scroll.on("scroll", pos => {
-        this.$emit("scroll", pos);
+      this.scroll.on("scroll", position => {
+        this.$emit("scroll", position);
       });
 
       // 3.监听上拉到底部
-      this.scroll.on("pullingUp", () => {
-        console.log("上拉加载");
-        this.$emit("pullingUp");
-      });
+      if (this.pullUpLoad) {
+        this.scroll.on("pullingUp", () => {
+          console.log("上拉加载更多");
+          this.$emit("pullingUp");
+        });
+      }
     },
     refresh() {
-      this.scroll && this.scroll.refresh && this.scroll.refresh();
+      // console.log('防抖动');
+      this.scroll && this.scroll.refresh();
     },
     finishPullUp() {
       this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp();
