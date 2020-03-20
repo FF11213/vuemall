@@ -9,6 +9,7 @@
       @tabClick="tabClick"
       ref="tabControl1"
       v-show="isTabFixed"
+      :data="showGoods"
     />
     <scroll
       ref="scroll"
@@ -44,7 +45,10 @@ import FeatureView from "./childComps/FeatureView";
 
 // 网络请求
 import { getHomeMultidata, getHomeGoods } from "network/home";
+
+// JS引用
 import { debounce } from "common/utils";
+import { itemListenerMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -61,6 +65,7 @@ export default {
     RecommendView,
     FeatureView
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       banners: [],
@@ -76,26 +81,8 @@ export default {
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0
-      // tabFirst: true, // 第一次进入的时候保存 tabControlOffsetTop 的值 , 之后不允许修改
     };
   },
-  // watch: {
-  //   scrollY() {
-  //     if (this.tabFirst) {
-  //       if (this.scrollY) {
-  //         this.tabOffsetTop = this.$refs.tab.$el.offsetTop;
-  //         this.tabFirst = false; // 为false tabOffsetTop
-  //       }
-  //     }
-  //     this.showTop = this.scrollY >= 2000 ? true : false;
-  //     this.showTab = this.scrollY >= this.tabOffsetTop ? true : false;
-  //     if (this.showTab) {
-  //       this.$refs.goods.$el.style.marginTop = "56px";
-  //       return;
-  //     }
-  //     this.$refs.goods.$el.style.marginTop = "0px";
-  //   }
-  // },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -104,9 +91,13 @@ export default {
   activated() {
     this.$refs.scroll.refresh();
     this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    
   },
   deactivated() {
+    // 保存Y值
     this.saveY = this.$refs.scroll.scroll.y;
+    // 取消全局监听
+    this.$bus.$off("itemImageLoad", this.itemImageListener);
   },
   created() {
     // 1.请求多个数据
@@ -116,15 +107,11 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
-  },
 
-  mounted() {
-    // 监听item中图片加载完成
-    const refresh = debounce(this.$refs.scroll.refresh, 200);
-    this.$bus.$on("itemImageLoad", () => {
-      refresh();
-    });
+    // 3.手动代码点击一次
+    this.tabClick(0);
   },
+  mounted() {},
   methods: {
     // 事件监听相关方法
     tabClick(index) {
@@ -139,8 +126,11 @@ export default {
           this.currentType = "sell";
           break;
       }
-      this.$refs.tabControl1.currentIndex = index;
-      this.$refs.tabControl2.currentIndex = index;
+
+      if (this.$refs.tabControl1 !== undefined) {
+        this.$refs.tabControl1.currentIndex = index;
+        this.$refs.tabControl2.currentIndex = index;
+      }
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0);
@@ -173,8 +163,9 @@ export default {
       getHomeGoods(type, page).then(res => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+
+        this.$refs.scroll.finishPullUp();
       });
-      this.$refs.scroll.finishPullUp();
     }
   }
 };

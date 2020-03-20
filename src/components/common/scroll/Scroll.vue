@@ -68,8 +68,8 @@ export default {
       }
     },
     refresh() {
-      // console.log('防抖动');
-      this.scroll && this.scroll.refresh();
+      // console.log("防抖动");
+      this.scroll && this.scroll.refresh && this.scroll.refresh();
     },
     finishPullUp() {
       this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp();
