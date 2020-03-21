@@ -10,8 +10,9 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top @click.native="backClick" v-show="isShowBackTop" />
-    <detail-bottom-bar />
+    
   </div>
 </template>
 
@@ -180,7 +181,20 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
-    }
+    },
+      addToCart() {
+        // 1.创建对象
+        const obj = {}
+        // 2.对象信息
+        obj.iid = this.iid;
+        obj.imgURL = this.topImages[0]
+        obj.title = this.goods.title
+        obj.desc = this.goods.desc;
+        obj.newPrice = this.goods.nowPrice;
+        // 3.添加到Store中
+        // this.$store.commit('addCart', obj)
+        this.$store.dispatch('addCart', obj)
+      },
   }
 };
 </script>
