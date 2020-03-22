@@ -1,7 +1,11 @@
 <template>
   <div id="shop-item">
     <div class="item-selector">
-      <check-button :isChecked="itemInfo.checked" @click.native="checkedChange" v-model="itemInfo.checked"></check-button>
+      <check-button
+        :isChecked="itemInfo.checked"
+        @click.native="checkedChange"
+        v-model="itemInfo.checked"
+      ></check-button>
     </div>
     <div class="item-img">
       <img :src="itemInfo.imgURL" alt="商品图片" />
@@ -11,7 +15,12 @@
       <div class="item-desc">商品描述: {{itemInfo.desc}}</div>
       <div class="info-bottom">
         <div class="item-price left">¥{{itemInfo.newPrice}}</div>
-        <div class="item-count right">x{{itemInfo.count}}</div>
+        <div class="item-count right">
+
+          <!-- <button @click="decrease">-</button> -->
+          <p>{{itemInfo.count}}</p>
+          <!-- <button @click="increase">+</button> -->
+        </div>
       </div>
     </div>
   </div>

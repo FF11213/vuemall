@@ -3,7 +3,7 @@
     <CheckButton class="select-all"  :isChecked="isSelectAll" @checkBtnClick="checkBtnClick" v-model="isSelectAll"></CheckButton>
     <span>全选</span>
     <span class="total-price">合计: ¥{{totalPrice}}</span>
-    <span class="buy-product">结算({{buySelect}})</span>
+    <span class="buy-product" @click="calcClick">结算({{buySelect}})</span>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ export default {
     CheckButton
   },
   computed: {
+    // vuex映射关系
     ...mapGetters(['cartList']),
     totalPrice() {
       return this.cartList.filter(item => {
@@ -31,10 +32,8 @@ export default {
       return this.cartList.filter(item => item.checked).length
     },
     isSelectAll() {
-      return (
-        this.cartList.find(item => item.checked === false) ===
-        undefined
-      );
+      if(this.cartList.length === 0) return false
+      return !this.cartList.find(item => !item.checked )
     }
   },
   methods: {
@@ -53,6 +52,12 @@ export default {
         this.$store.state.cartList.forEach(item => {
           item.checked = false;
         });
+      }
+    },
+
+    calcClick() {
+      if (!this.isSelectAll) {
+        this.$toast.show('请先选择要购买的商品')
       }
     }
   }
@@ -83,16 +88,16 @@ export default {
 }
 
 .bottom-bar .total-price {
-  margin-left: 15px;
-  font-size: 16px;
+  margin-left: 130px;
+  font-size: 15px;
   color: gray
 }
 
 .bottom-bar .buy-product {
   background-color: var(--color-tint);
   color: #fff;
-  width: 100px;
-  height: 44px;
+  width: 90px;
+  height: px;
   text-align: center;
   line-height: 44px;
   float: right;

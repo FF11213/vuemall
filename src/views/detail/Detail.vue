@@ -12,16 +12,18 @@
     </scroll>
     <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top @click.native="backClick" v-show="isShowBackTop" />
-    
+    <toast :message="message" :isShow="show"/>
   </div>
 </template>
 
 <script>
+// components组件引用
 import Scroll from "components/common/scroll/Scroll";
 import GoodsList from "components/content/goods/GoodsList";
 import BackTop from "components/content/backTop/BackTop";
+import Toast from "components/common/toast/Toast"
 
-//childComps引用
+//childComps组件引用
 import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
@@ -44,6 +46,9 @@ import {
 import { debounce } from "common/utils";
 import { itemListenerMixin } from "common/mixin";
 
+// vuex映射
+import { mapActions } from "vuex";
+
 export default {
   name: "Detail",
   components: {
@@ -57,7 +62,8 @@ export default {
     DetailCommentInfo,
     DetailBottomBar,
     GoodsList,
-    BackTop
+    BackTop,
+    Toast
   },
   mixins: [itemListenerMixin],
   data() {
@@ -72,7 +78,10 @@ export default {
       recommends: [],
       themeTopYs: [],
       currentIndex: 0,
-      isShowBackTop: false
+      isShowBackTop: false,
+      message: '',
+      show: false
+
     };
   },
   created() {
@@ -182,19 +191,41 @@ export default {
         }
       }
     },
-      addToCart() {
-        // 1.创建对象
-        const obj = {}
-        // 2.对象信息
-        obj.iid = this.iid;
-        obj.imgURL = this.topImages[0]
-        obj.title = this.goods.title
-        obj.desc = this.goods.desc;
-        obj.newPrice = this.goods.nowPrice;
-        // 3.添加到Store中
-        // this.$store.commit('addCart', obj)
-        this.$store.dispatch('addCart', obj)
-      },
+    // vuex映射关系
+    ...mapActions(['addCart']),
+    addToCart() {
+      // 1.创建对象
+      const obj = {};
+
+      // 2.对象信息
+      obj.iid = this.iid;
+      obj.imgURL = this.topImages[0];
+      obj.title = this.goods.title;
+      obj.desc = this.goods.desc;
+      obj.newPrice = this.goods.nowPrice;
+
+      // 3.添加到Store中
+      // this.$store.commit('addCart', obj)
+      // this.$store.dispatch('addCart', obj).then(res => {
+      //   console.log(res);
+      // })
+
+      // toast
+      this.addCart(obj).then(res => {
+      //   console.log(res); 
+      //   this.toastShow = true;
+      //   this.toastMessage = res
+
+      //   setTimeout(() => {
+      //   this.toastShow = false;
+      //   this.toastMessage = ''
+      //   }, 1500)
+
+        this.$toast.show(res)
+      });
+
+
+    }
   }
 };
 </script>

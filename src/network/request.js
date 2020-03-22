@@ -16,11 +16,30 @@ export function request(config) {
     console.log(err)
   });
   // 2、2响应拦截器
-  instance.interceptors.response.use((res) => {
+  // instance.interceptors.response.use((res) => {
+  //   return res.data
+  // }, (err) => {
+  //   console.log(err)
+  // });
+  
+  instance.interceptors.response.use(res => {
+    // console.log('来到了response拦截success中');
     return res.data
-  }, (err) => {
-    console.log(err)
-  });
+  }, err => {
+    console.log('来到了response拦截failure中');
+    console.log(err);
+    if (err && err.res) {
+      switch (err.res.status) {
+        case 400:
+          err.message = '请求错误'
+          break
+        case 401:
+          err.message = '未授权的访问'
+          break
+      }
+    }
+    return err
+  })
   //3、发送真正的网络请求
   return instance(config); //返回一个Promise
 }
